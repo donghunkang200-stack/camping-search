@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export default function App() {
   useEffect(() => {
     if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init(import.meta.env.VITE_KAKAO_JS_KEY);
+      window.Kakao.init(import.meta.env.REACT_APP_KAKAO_JS_KEY);
       console.log("Kakao SDK Initialized");
     }
   }, []);
