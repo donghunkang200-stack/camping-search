@@ -1,0 +1,244 @@
+/* ============================
+    전체 레이아웃 / 글로벌
+============================ */
+.camping-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+  background-color: #faf8f3;
+}
+
+/* 제목 */
+.camping-title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  color: #2e4f2f;
+  margin-bottom: 25px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid #c9d9c9;
+}
+
+.camping-title2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #4a6b4a; /* 조금 더 밝은 숲색 */
+  margin-top: -10px;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+/* ============================
+    검색창 UI
+============================ */
+.search-box {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  padding: 5px 10px;
+  width: 320px;
+  height: 36px;
+  border: 2px solid #b6c7b6;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s;
+  background: #fffef8;
+}
+
+.search-input:focus {
+  border-color: #4b6b4b;
+  box-shadow: 0 0 6px rgba(75, 107, 75, 0.3);
+}
+
+.search-button {
+  padding: 12px 18px;
+  height: 50px;
+  background: #4b6b4b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-button:hover {
+  background: #5cd16b;
+}
+
+/* ============================
+    지역 필터
+============================ */
+.location-filter {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 25px;
+  height: 50px;
+}
+
+.filter-select {
+  padding: 12px 14px;
+  border: 2px solid #b6c7b6;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fffef8;
+  cursor: pointer;
+  color: #2e4f2f;
+  transition: 0.2s;
+}
+
+.filter-select:hover {
+  border-color: #4b6b4b;
+  box-shadow: 0 0 5px rgba(75, 107, 75, 0.2);
+}
+
+.filter-select:disabled {
+  opacity: 0.5;
+  background: #f1f1f1;
+}
+
+/* ============================
+    리스트  & 카드 레이아웃
+============================ */
+.camping-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+/* 캠핑장 카드 */
+.camp-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: 0.25s;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid #e9eee9;
+}
+
+.camp-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+}
+
+.camp-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background: #dce5dc;
+}
+
+/* 이미지 없음 */
+.no-image-box {
+  height: 170px;
+  background: #eef5ee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #4b6b4b;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ============================
+    카드 내용
+============================ */
+.camp-content {
+  padding: 15px;
+}
+
+.camp-name {
+  text-decoration: none;
+}
+
+.camp-name h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2e4f2f;
+  transition: 0.15s;
+}
+
+.camp-name h3:hover {
+  color: #5cd16b;
+}
+
+.camp-addr1 {
+  color: #555;
+  margin: 6px 0;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.camp-tel {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* 지도 링크 */
+.map-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b6b4b;
+  text-decoration: underline;
+  transition: 0.15s;
+}
+
+.map-link:hover {
+  color: #5cd16b;
+}
+
+/* ============================
+    페이지네이션
+============================ */
+.pagination-box {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 30px;
+}
+
+.page-btn {
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 2px solid #b6c7b6;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #4b6b4b;
+  transition: 0.2s;
+}
+
+.page-btn:hover {
+  background: #eaf4ea;
+}
+
+.page-btn.active {
+  background: #4b6b4b;
+  color: white;
+  font-weight: bold;
+}
+
+.page-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 검색결과 없음 */
+.no-result {
+  text-align: center;
+  color: #777;
+  margin-top: 20px;
+  font-size: 16px;
+}
