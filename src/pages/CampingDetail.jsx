@@ -482,10 +482,10 @@ export default function CampingDetail() {
         <img src={camp.firstImageUrl} className="camp-img" alt="캠핑장" />
       )}
 
-      <h3>📌 시설 안내</h3>
+      <h3 className="camp-section">📌 시설 안내</h3>
       <div className="facility-box">{renderFacilities(camp.sbrsCl)}</div>
 
-      <h3>⛅ 날씨</h3>
+      <h3 className="camp-section">⛅ 날씨</h3>
       {weather ? (
         <div className="weather-box">
           <p>🌡온도: {weather.main.temp}°C</p>

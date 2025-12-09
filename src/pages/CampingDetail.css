@@ -173,33 +173,18 @@ ul li:hover {
   font-weight: 600;
 }
 
-/* 좋아요 버튼 */
-.like-button {
-  padding: 11px 18px;
-  background: #fe6674;
-  color: white;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  margin-top: 12px;
-  transition: 0.2s;
-}
-
-.like-button:hover {
-  background: #ff4a63;
-  transform: translateY(-2px);
-}
-
 /* 공유 버튼 */
+
 .share-box button {
+  width: 500px;
   padding: 10px 14px;
   background: #fee500;
   border-radius: 10px;
   border: none;
   cursor: pointer;
   font-weight: 600;
+  margin-left: 200px;
+  margin-top: 20px;
   margin-bottom: 20px;
   color: black;
   transition: 0.2s;
