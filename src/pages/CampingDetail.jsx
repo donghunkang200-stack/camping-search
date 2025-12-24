@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import { getCampingDetail, getNearbyCamping } from "../api/campingApi";
 import "./CampingDetail.css";
 
 export default function CampingDetail() {
@@ -38,8 +39,8 @@ export default function CampingDetail() {
   /** 🔹 캠핑장 상세 데이터 로드 */
   const loadDetail = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/camping/detail/${id}`);
-      const data = await res.json();
+      // fetch 대신 우리가 만든 API 서비스 사용 (자동으로 토큰 동봉)
+      const data = await getCampingDetail(id);
       setCamp(data.data ?? null);
     } catch (err) {
       console.error("상세 조회 실패:", err);
@@ -52,13 +53,11 @@ export default function CampingDetail() {
   /** 주변 캠핑장 추천 */
   const loadRecommendations = async (lat, lng) => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/camping/nearby?lat=${lat}&lng=${lng}&distance=10`
-      );
-      const data = await res.json();
+      // fetch 대신 API 서비스 사용
+      const data = await getNearbyCamping(lat, lng, 10);
       // ⭐ 현재 캠핑장은 제외하고 추천 목록 생성
       const filtered = (data.data || []).filter(
-        (item) => item.contentId !== camp.contentId
+        (item) => item.contentId !== id
       );
       setRecommend(filtered);
     } catch (err) {
@@ -468,121 +467,149 @@ export default function CampingDetail() {
   if (!camp) return <p>데이터 없음</p>;
 
   return (
-    <div className="camp-wrapper">
-      <h1 className="camp-title">🏕 {camp.facltNm}</h1>
-
-      <div className="camp-info-row">
-        <p className="camp-addr">🏁 {camp.addr1}</p>
-        <Link to="/" className="back-button">
-          ← 캠핑장 목록으로
+    <div className="camp-detail-container">
+      {/* 상단 헤더 섹션 */}
+      <header className="camp-detail-header">
+        <Link to="/camping" className="back-link">
+          <span className="icon">←</span> 돌아가기
         </Link>
-      </div>
-
-      {camp.firstImageUrl && (
-        <img src={camp.firstImageUrl} className="camp-img" alt="캠핑장" />
-      )}
-
-      <h3 className="camp-section">📌 시설 안내</h3>
-      <div className="facility-box">{renderFacilities(camp.sbrsCl)}</div>
-
-      <h3 className="camp-section">⛅ 날씨</h3>
-      {weather ? (
-        <div className="weather-box">
-          <p>🌡온도: {weather.main.temp}°C</p>
-          <p>💦습도: {weather.main.humidity}%</p>
-          <p>🌫바람: {weather.wind.speed} m/s</p>
+        <h1 className="camp-main-title">{camp.facltNm}</h1>
+        <div className="camp-sub-info">
+          <span className="camp-tag">
+            {camp.doNm} {camp.sigunguNm}
+          </span>
+          <p className="camp-full-addr">🏁 {camp.addr1}</p>
         </div>
-      ) : (
-        <p>날씨 정보를 불러오는 중...</p>
-      )}
+      </header>
 
-      <h3 className="camp-section">📞 연락처</h3>
-      <p>{camp.tel || "정보 없음"}</p>
-
-      <h3 className="camp-section">📝 소개</h3>
-      <p>{camp.intro || "소개 정보 없음"}</p>
-
-      <div className="share-box">
-        <button onClick={shareKakao}>카카오톡 공유하기</button>
-      </div>
-
-      <div className="category-buttons">
-        <button
-          className={category === "FD6" ? "selected" : ""}
-          onClick={() => setCategory("FD6")}
-        >
-          맛집
-        </button>
-        <button
-          className={category === "CE7" ? "selected" : ""}
-          onClick={() => setCategory("CE7")}
-        >
-          카페
-        </button>
-        <button
-          className={category === "AT4" ? "selected" : ""}
-          onClick={() => setCategory("AT4")}
-        >
-          명소
-        </button>
-        <button
-          className={category === "CS2" ? "selected" : ""}
-          onClick={() => setCategory("CS2")}
-        >
-          편의점
-        </button>
-        <button
-          className={category === "RECOMMEND" ? "selected" : ""}
-          onClick={() => setCategory("RECOMMEND")}
-        >
-          주변 캠핑장
-        </button>
-      </div>
-
-      <div id="map" className="camp-map"></div>
-
-      <div className="nearby-list">
-        <h2>📍 주변 장소</h2>
-        {combinedList.length === 0 ? (
-          <p>자료를 불러오는 중...</p>
+      {/* 메인 비주얼 이미지 */}
+      <div className="camp-hero-image">
+        {camp.firstImageUrl ? (
+          <img src={camp.firstImageUrl} alt={camp.facltNm} />
         ) : (
-          <ul>
-            {combinedList
-              .filter((place) => {
-                // 주변 캠핑장은 RECOMMEND 카테고리일 때만 표시
-                if (category !== "RECOMMEND" && place.type === "recommend") {
-                  return false;
-                }
-                return true;
-              })
-              .map((place) => (
-                <li
-                  key={place.id}
-                  className="nearby-item"
-                  onClick={() =>
-                    handleMoveMap(
-                      place.y,
-                      place.x,
-                      place.place_name,
-                      place.address_name,
-                      place.id
-                    )
-                  }
-                >
-                  {place.place_name} - {place.address_name}
-                </li>
-              ))}
-
-            {/* 🔥 필터 후에도 아무것도 없을 때 */}
-            {combinedList.filter((p) =>
-              category === "RECOMMEND"
-                ? p.type === "recommend"
-                : p.type !== "recommend"
-            ).length === 0 && (
-              <li style={{ color: "#666" }}>주변 장소가 없습니다.</li>
-            )}
-          </ul>
+          <div className="no-hero-image">
+            🔥 멋진 캠핑 사진을 기다리고 있어요!
+          </div>
         )}
+      </div>
+
+      <div className="camp-grid-layout">
+        {/* 왼쪽: 상세 정보 섹션 */}
+        <section className="camp-main-content">
+          <div className="content-card">
+            <h3 className="section-title">🌿 캠핑장 소개</h3>
+            <p className="camp-description">
+              {camp.intro ||
+                "자연과 함께하는 힐링 캠핑장입니다. 조용하고 쾌적한 환경을 자랑합니다."}
+            </p>
+          </div>
+
+          <div className="content-card">
+            <h3 className="section-title">🚿 편의 시설</h3>
+            <div className="facility-grid">{renderFacilities(camp.sbrsCl)}</div>
+          </div>
+
+          <div className="content-card">
+            <h3 className="section-title">⛅ 현재 캠핑장 날씨</h3>
+            {weather ? (
+              <div className="weather-widget">
+                <div className="weather-item">
+                  <span className="w-label">온도</span>
+                  <span className="w-value">{weather.main.temp}°C</span>
+                </div>
+                <div className="weather-item">
+                  <span className="w-label">습도</span>
+                  <span className="w-value">{weather.main.humidity}%</span>
+                </div>
+                <div className="weather-item">
+                  <span className="w-label">바람</span>
+                  <span className="w-value">{weather.wind.speed} m/s</span>
+                </div>
+              </div>
+            ) : (
+              <p className="loading-text">날씨 정보를 가져오는 중...</p>
+            )}
+          </div>
+          <div className="content-card contact-section">
+            <h3 className="section-title">📞 고객센터 및 연락처</h3>
+            <div className="contact-box">
+              <div className="contact-item">
+                <span className="contact-label">대표번호</span>
+                <span className="contact-value">
+                  {camp.tel || "등록된 번호가 없습니다"}
+                </span>
+              </div>
+              {camp.tel && (
+                <a href={`tel:${camp.tel}`} className="call-now-btn">
+                  바로 전화하기 📞
+                </a>
+              )}
+            </div>
+          </div>
+          <div className="action-row">
+            <button className="kakao-share-btn" onClick={shareKakao}>
+              카카오톡 친구에게 공유하기 💬
+            </button>
+          </div>
+        </section>
+
+        {/* 오른쪽: 지도 및 주변 장소 섹션 */}
+        <aside className="camp-side-content">
+          <div className="sticky-side">
+            <h3 className="section-title">📍 주변 탐색</h3>
+            <div className="category-tabs">
+              {[
+                { id: "FD6", label: "맛집" },
+                { id: "CE7", label: "카페" },
+                { id: "AT4", label: "명소" },
+                { id: "CS2", label: "편의점" },
+                { id: "RECOMMEND", label: "추천캠핑" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  className={category === tab.id ? "tab-btn active" : "tab-btn"}
+                  onClick={() => setCategory(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div id="map" className="detail-map"></div>
+
+            <div className="nearby-scroll-area">
+              <ul className="nearby-list-box">
+                {combinedList
+                  .filter((p) =>
+                    category === "RECOMMEND"
+                      ? p.type === "recommend"
+                      : p.type !== "recommend"
+                  )
+                  .map((place) => (
+                    <li
+                      key={place.id}
+                      className="nearby-card-item"
+                      onClick={() =>
+                        handleMoveMap(
+                          place.y,
+                          place.x,
+                          place.place_name,
+                          place.address_name,
+                          place.id
+                        )
+                      }
+                    >
+                      <div className="nearby-info">
+                        <strong>{place.place_name}</strong>
+                        <p>{place.address_name}</p>
+                      </div>
+                      <span className="move-arrow">→</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

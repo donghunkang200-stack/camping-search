@@ -111,90 +111,129 @@ export default function CampingList() {
 
   return (
     <div className="camping-container">
-      <h1 className="camping-title">🏕 캠핑가자</h1>
-      <h2 className="camping-title2"> 어디로 가고 싶으신가요?</h2>
+      <header className="list-header">
+        <span className="emoji-badge">🏕️🚗</span>
+        <h1 className="camping-title">캠핑장 찾기</h1>
+        <p className="camping-subtitle">
+          지친 일상을 떠나 자연 속으로 들어가는 첫 걸음
+        </p>
+      </header>
 
-      <div className="search-box">
-        <input
-          className="search-input"
-          placeholder="검색어 (이름/주소)"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-        />
-        {/* 필터 */}
-        <div className="location-filter">
-          {/* 시/도 선택 */}
-          <select
-            className="filter-select"
-            value={selectedDo}
-            onChange={(e) => setSelectedDo(e.target.value)}
-          >
-            <option value="">시 / 도 전체</option>
-            {doNmList.map((doItem) => (
-              <option key={doItem} value={doItem}>
-                {doItem}
-              </option>
-            ))}
-          </select>
+      <div className="search-section">
+        <div className="search-box">
+          <div className="input-group">
+            <span className="search-icon">🔍</span>
+            <input
+              className="search-input"
+              placeholder="캠핑장 이름이나 주소를 입력하세요"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+            />
+          </div>
 
-          {/* 시군구 선택 */}
-          <select
-            className="filter-select"
-            value={selectedSigungu}
-            onChange={(e) => setSelectedSigungu(e.target.value)}
-            disabled={!selectedDo}
-          >
-            <option value="">시군구 전체</option>
-            {sigunguNmList.map((sig) => (
-              <option key={sig} value={sig}>
-                {sig}
-              </option>
-            ))}
-          </select>
+          <div className="location-filter">
+            <select
+              className="filter-select"
+              value={selectedDo}
+              onChange={(e) => setSelectedDo(e.target.value)}
+            >
+              <option value="">시 / 도 선택</option>
+              {doNmList.map((doItem) => (
+                <option key={doItem} value={doItem}>
+                  {doItem}
+                </option>
+              ))}
+            </select>
+
+            <select
+              className="filter-select"
+              value={selectedSigungu}
+              onChange={(e) => setSelectedSigungu(e.target.value)}
+              disabled={!selectedDo}
+            >
+              <option value="">시군구 선택</option>
+              {sigunguNmList.map((sig) => (
+                <option key={sig} value={sig}>
+                  {sig}
+                </option>
+              ))}
+            </select>
+
+            <button className="search-button" onClick={handleSearch}>
+              검색하기
+            </button>
+          </div>
         </div>
-        <button className="search-button" onClick={handleSearch}>
-          검색
-        </button>
       </div>
 
       {visibleCampings.length === 0 && (
-        <p className="no-result">⚠ 검색 결과가 없습니다.</p>
+        <div className="no-result-box">
+          <p className="no-result">
+            ⚠ 검색 결과가 없습니다. 다른 검색어를 입력해보세요.
+          </p>
+        </div>
       )}
 
       <div className="camping-grid">
         {visibleCampings.map((camp, index) => (
           <div key={camp.contentId || index} className="camp-card">
-            {camp.firstImageUrl ? (
-              <img src={camp.firstImageUrl} alt="캠핑 이미지" />
-            ) : (
-              <div className="no-image-box">No Image</div>
-            )}
+            <div className="camp-image-wrapper">
+              {camp.firstImageUrl ? (
+                <img
+                  src={camp.firstImageUrl}
+                  alt={camp.facltNm}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="no-image-box">🔥 No Image</div>
+              )}
+              {/* 지역 태그 추가 */}
+              <span className="do-tag">{camp.doNm}</span>
+            </div>
 
             <div className="camp-content">
               <Link to={`/detail/${camp.contentId}`} className="camp-name">
                 <h3>{camp.facltNm}</h3>
               </Link>
 
-              <p className="camp-addr1">{camp.addr1}</p>
-              <p className="camp-tel">📞 {camp.tel || "정보 없음"}</p>
+              <div className="camp-info">
+                <p className="camp-addr1">
+                  <span className="icon">📍</span> {camp.addr1}
+                </p>
+                <p className="camp-tel">
+                  <span className="icon">📞</span> {camp.tel || "정보 없음"}
+                </p>
+              </div>
 
-              {camp.mapX && camp.mapY && (
-                <a
-                  className="map-link"
-                  href={`https://map.kakao.com/link/map/${camp.facltNm},${camp.mapY},${camp.mapX}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div className="card-footer">
+                {camp.mapX && camp.mapY && (
+                  <a
+                    className="map-link-btn"
+                    href={`https://map.kakao.com/link/map/${camp.facltNm},${camp.mapY},${camp.mapX}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    길찾기 →
+                  </a>
+                )}
+                <Link
+                  to={`/detail/${camp.contentId}`}
+                  className="detail-link-btn"
                 >
-                  지도 보기 →
-                </a>
-              )}
+                  상세보기
+                </Link>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* 화면 하단 감지 영역 */}
-      <div ref={loaderRef} style={{ height: "50px" }}></div>
+      <div ref={loaderRef} className="scroll-loader">
+        {visibleCampings.length < filteredCampings.length && (
+          <div className="loading-spinner">더 많은 캠핑장 불러오는 중...</div>
+        )}
+      </div>
     </div>
   );
 }
