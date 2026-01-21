@@ -1,9 +1,10 @@
 /* 컨테이너 */
+@reference "../index.css";
+
 .camp-detail-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  background-color: #faf8f3;
 }
 
 /* 헤더 */
@@ -12,7 +13,7 @@
 }
 
 .back-link {
-  color: #4b6b4b;
+  color: var(--color-primary-600);
   text-decoration: none;
   font-weight: 700;
   font-size: 14px;
@@ -22,8 +23,6 @@
 
 .camp-main-title {
   font-size: 48px;
-  font-weight: 900;
-  color: #2e4f2f;
   margin: 0 0 10px 0;
 }
 
@@ -34,7 +33,7 @@
 }
 
 .camp-tag {
-  background: #4b6b4b;
+  background: var(--color-primary-600);
   color: white;
   padding: 4px 12px;
   border-radius: 8px;
@@ -46,7 +45,7 @@
 .camp-hero-image {
   width: 100%;
   height: 500px;
-  border-radius: 32px;
+  border-radius: var(--radius-4xl);
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   margin-bottom: 50px;
@@ -67,21 +66,12 @@
 
 /* 카드 스타일 */
 .content-card {
-  background: white;
-  padding: 30px;
-  border-radius: 24px;
-  margin-bottom: 25px;
-  border: 1px solid #eef2ee;
-  box-shadow: 0 4px 15px rgba(46, 79, 47, 0.04);
+  @apply card-premium p-10 mb-8;
 }
 
 .section-title {
   font-size: 20px;
-  font-weight: 800;
-  color: #2e4f2f;
   margin-bottom: 20px;
-  display: flex;
-  align-items: center;
 }
 
 /* 시설 태그 */
@@ -92,12 +82,12 @@
 }
 
 .facility-tag {
-  background: #f1f5f1;
+  background: var(--color-primary-50);
   padding: 10px 18px;
   border-radius: 14px;
   font-size: 14px;
   font-weight: 600;
-  color: #4b6b4b;
+  color: var(--color-primary-800);
 }
 
 /* 날씨 위젯 */
@@ -108,24 +98,25 @@
 
 .weather-item {
   flex: 1;
-  background: #fcfdfc;
+  background: var(--color-primary-50);
   padding: 15px;
   border-radius: 16px;
   text-align: center;
-  border: 1px solid #e9eee9;
+  border: 1px solid var(--color-primary-100);
 }
 
 .w-label {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: var(--color-primary-600);
+  opacity: 0.6;
   margin-bottom: 5px;
 }
 
 .w-value {
   font-size: 18px;
   font-weight: 800;
-  color: #4b6b4b;
+  color: var(--color-primary-800);
 }
 
 /* 사이드바 - 지도 및 탭 */
@@ -147,22 +138,22 @@
   padding: 8px 16px;
   border-radius: 12px;
   background: white;
-  border: 2px solid #e9eee9;
+  border: 2px solid var(--color-primary-100);
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
 }
 
 .tab-btn.active {
-  background: #4b6b4b;
+  background: var(--color-primary-600);
   color: white;
-  border-color: #4b6b4b;
+  border-color: var(--color-primary-600);
 }
 
 .detail-map {
   width: 100%;
   height: 300px;
-  border-radius: 24px;
+  border-radius: var(--radius-3xl);
   margin-bottom: 20px;
   border: 4px solid white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
@@ -183,24 +174,25 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #eef2ee;
+  border: 1px solid var(--color-primary-100);
   transition: 0.2s;
 }
 
 .nearby-card-item:hover {
-  background: #f1f5f1;
+  background: var(--color-primary-50);
   transform: translateX(5px);
 }
 
 .nearby-info strong {
   display: block;
   font-size: 14px;
-  color: #2e4f2f;
+  color: var(--color-primary-800);
 }
 
 .nearby-info p {
   font-size: 12px;
-  color: #888;
+  color: var(--color-primary-600);
+  opacity: 0.7;
   margin-top: 3px;
 }
 
@@ -220,10 +212,11 @@
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(250, 225, 0, 0.2);
 }
+
 /* 연락처 섹션 스타일 */
 .contact-section {
-  background: linear-gradient(to right, #ffffff, #f9fbf9);
-  border-left: 5px solid #4b6b4b; /* 왼쪽에 포인트 선 */
+  background: linear-gradient(to right, #ffffff, var(--color-primary-50));
+  border-left: 5px solid var(--color-primary-600);
 }
 
 .contact-box {
@@ -240,7 +233,8 @@
 
 .contact-label {
   font-size: 12px;
-  color: #888;
+  color: var(--color-primary-600);
+  opacity: 0.6;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -248,25 +242,12 @@
 .contact-value {
   font-size: 22px;
   font-weight: 800;
-  color: #2e4f2f;
+  color: var(--color-primary-800);
   letter-spacing: 0.5px;
 }
 
 .call-now-btn {
-  background: #4b6b4b;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 14px;
-  transition: 0.2s;
-  box-shadow: 0 4px 10px rgba(75, 107, 75, 0.15);
-}
-
-.call-now-btn:hover {
-  background: #3d5a3d;
-  transform: scale(1.05);
+  @apply bg-primary-600 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-md hover:bg-primary-800 transition-all;
 }
 
 /* 모바일 대응 */
@@ -275,6 +256,7 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
   .call-now-btn {
     width: 100%;
     text-align: center;

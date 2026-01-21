@@ -1,0 +1,61 @@
+@reference "../index.css";
+
+.home-container {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 100px 20px;
+  text-align: center;
+  background-color: var(--color-primary-50);
+  border-radius: var(--radius-4xl);
+  border: 1px solid var(--color-primary-100);
+}
+
+.home-title {
+  font-size: clamp(40px, 8vw, 64px);
+  margin-bottom: 24px;
+}
+
+.home-title span {
+  color: var(--color-primary-600);
+}
+
+.home-subtitle {
+  font-size: 20px;
+  color: var(--color-primary-800);
+  opacity: 0.8;
+  margin-bottom: 50px;
+  line-height: 1.6;
+}
+
+.home-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-primary {
+  @apply btn-forest;
+}
+
+.btn-secondary {
+  @apply btn-outline;
+}
+
+/* 아래쪽에 캠핑 느낌의 일러스트나 아이콘 배치용 */
+.home-deco {
+  margin-bottom: 40px;
+  font-size: 100px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+}

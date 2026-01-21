@@ -1,12 +1,12 @@
 /* ============================
     전체 레이아웃 / 글로벌
 ============================ */
+@reference "../index.css";
+
 .camping-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: "Pretendard", -apple-system, sans-serif;
-  background-color: #faf8f3;
 }
 
 .list-header {
@@ -22,14 +22,11 @@
 
 .camping-title {
   font-size: 42px;
-  font-weight: 900;
-  color: #2e4f2f;
   margin-bottom: 8px !important;
-  letter-spacing: -0.5px;
 }
 
 .camping-subtitle {
-  color: #6a7c6a;
+  color: var(--color-primary-600);
   font-size: 18px;
   font-weight: 500;
 }
@@ -38,12 +35,9 @@
     검색창 및 필터 섹션
 ============================ */
 .search-section {
-  background: white;
-  padding: 35px;
-  border-radius: 32px;
+  @apply card-premium p-10 mb-12;
   box-shadow: 0 15px 35px rgba(46, 79, 47, 0.08);
-  margin-bottom: 50px;
-  border: 1px solid #eef2ee;
+  /* 조금 더 입체적인 그림자 유지 */
 }
 
 .search-box {
@@ -70,8 +64,8 @@
   width: 100%;
   height: 58px;
   padding: 0 20px 0 55px;
-  background: #f8faf8 !important;
-  border: 2px solid #e0e6e0;
+  background: var(--color-primary-50) !important;
+  border: 2px solid var(--color-primary-100);
   border-radius: 16px;
   font-size: 16px;
   outline: none;
@@ -79,7 +73,7 @@
 }
 
 .search-input:focus {
-  border-color: #4b6b4b;
+  border-color: var(--color-primary-600);
   background: white !important;
   box-shadow: 0 0 0 4px rgba(75, 107, 75, 0.1);
 }
@@ -88,45 +82,25 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  width: 100%;
 }
 
 .filter-select {
   flex: 1;
-  min-width: 150px;
+  min-width: 200px;
   height: 54px;
   padding: 0 15px;
-  border: 2px solid #e0e6e0;
+  border: 2px solid var(--color-primary-100);
   border-radius: 14px;
   font-size: 15px;
   background: white;
-  color: #2e4f2f;
+  color: var(--color-primary-800);
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 .filter-select:hover:not(:disabled) {
-  border-color: #4b6b4b;
-}
-
-.search-button {
-  padding: 0 30px;
-  height: 54px;
-  background: #4b6b4b;
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(75, 107, 75, 0.2);
-}
-
-.search-button:hover {
-  background: #3d5a3d;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(75, 107, 75, 0.3);
+  border-color: var(--color-primary-600);
 }
 
 /* ============================
@@ -139,19 +113,12 @@
 }
 
 .camp-card {
-  background: #ffffff;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #eef2ee;
+  @apply card-premium flex flex-col;
 }
 
 .camp-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 30px rgba(46, 79, 47, 0.12);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(46, 79, 47, 0.12);
 }
 
 .camp-image-wrapper {
@@ -164,7 +131,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s;
 }
 
 .camp-card:hover img {
@@ -187,11 +153,11 @@
 
 .no-image-box {
   height: 100%;
-  background: #f1f5f1;
+  background: var(--color-primary-50);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #4b6b4b;
+  color: var(--color-primary-600);
   font-weight: 700;
 }
 
@@ -208,8 +174,6 @@
 .camp-name h3 {
   margin: 0 0 10px 0;
   font-size: 20px;
-  font-weight: 800;
-  color: #2e4f2f;
   line-height: 1.4;
 }
 
@@ -219,7 +183,8 @@
 
 .camp-addr1,
 .camp-tel {
-  color: #666;
+  color: var(--color-primary-700);
+  opacity: 0.8;
   font-size: 14px;
   margin: 4px 0;
   display: flex;
@@ -233,29 +198,18 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 15px;
-  border-top: 1px solid #f0f4f0;
+  border-top: 1px solid var(--color-primary-50);
 }
 
 .map-link-btn {
   font-size: 13px;
   font-weight: 700;
-  color: #4b6b4b;
+  color: var(--color-primary-600);
   text-decoration: none;
 }
 
 .detail-link-btn {
-  background: #4b6b4b;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: 0.2s;
-}
-
-.detail-link-btn:hover {
-  background: #2e4f2f;
+  @apply bg-primary-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-primary-800 transition-all;
 }
 
 /* ============================
@@ -266,18 +220,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #4b6b4b;
+  color: var(--color-primary-600);
   font-weight: 600;
 }
 
 .no-result-box {
-  text-align: center;
-  padding: 100px 0;
-  background: white;
-  border-radius: 24px;
+  @apply card-premium p-24 text-center;
 }
 
 .no-result {
-  color: #999;
+  color: var(--color-primary-500);
   font-size: 18px;
 }

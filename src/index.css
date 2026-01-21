@@ -1,1 +1,82 @@
 @import "tailwindcss";
+
+@theme {
+    /* ============================
+      Color Palette (Nature & Camping)
+  ============================ */
+    --color-primary-900: #1a2f1b;
+    --color-primary-800: #2e4f2f;
+    /* Forest Green (Core) */
+    --color-primary-700: #3d5a3d;
+    --color-primary-600: #4b6b4b;
+    /* Sage Green (Accent) */
+    --color-primary-500: #5da05d;
+    --color-primary-100: #eef2ee;
+    --color-primary-50: #f1f5f1;
+
+    --color-secondary-800: #8b4513;
+    /* Saddle Brown (Logo/Accents) */
+    --color-secondary-500: #d2691e;
+    /* Chocolate */
+
+    --color-surface-bg: #faf8f3;
+    /* Warm Paper White */
+    --color-surface-card: #ffffff;
+
+    /* ============================
+      Typography & Spacing
+  ============================ */
+    --font-sans: "Inter", "Pretendard", "Noto Sans KR", sans-serif;
+    --radius-4xl: 2rem;
+    --radius-3xl: 1.5rem;
+
+    --shadow-forest: 0 10px 20px rgba(46, 79, 47, 0.15);
+    --shadow-premium: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* ============================
+    Global Base Styles
+============================ */
+@layer base {
+    body {
+        @apply bg-surface-bg text-primary-900 font-sans;
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply text-primary-800 font-extrabold tracking-tighter;
+    }
+
+    /* Smooth Transitions */
+    * {
+        transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    button {
+        cursor: pointer;
+    }
+}
+
+/* ============================
+    Reusable Components Utilities (Tailwind v4 @utility)
+============================ */
+@utility btn-base {
+    @apply px-8 py-4 rounded-2xl font-black text-center transition-all active:scale-[0.98] shadow-sm;
+}
+
+@utility btn-forest {
+    @apply px-8 py-4 rounded-2xl font-black text-center transition-all active:scale-[0.98] bg-primary-800 text-white hover:bg-primary-700 hover:-translate-y-1 shadow-forest;
+}
+
+@utility btn-outline {
+    @apply px-8 py-4 rounded-2xl font-black text-center transition-all active:scale-[0.98] shadow-sm bg-white text-primary-800 border-2 border-primary-100 hover:border-primary-600 hover:text-primary-600 hover:-translate-y-1 hover:shadow-md;
+}
+
+@utility card-premium {
+    @apply bg-surface-card rounded-3xl border border-primary-100 shadow-premium overflow-hidden;
+}

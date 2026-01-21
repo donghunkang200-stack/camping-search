@@ -36,10 +36,12 @@ export default function CampingDetail() {
     });
   };
 
-  /** 🔹 캠핑장 상세 데이터 로드 */
+  /**
+   * 1. 캠핑장 상세 데이터 로드
+   * useParams로 받은 ID를 사용하여 특정 캠핑장의 모든 정보를 가져옵니다.
+   */
   const loadDetail = async () => {
     try {
-      // fetch 대신 우리가 만든 API 서비스 사용 (자동으로 토큰 동봉)
       const data = await getCampingDetail(id);
       setCamp(data.data ?? null);
     } catch (err) {
@@ -50,12 +52,14 @@ export default function CampingDetail() {
     }
   };
 
-  /** 주변 캠핑장 추천 */
+  /**
+   * 2. 주변 캠핑장 추천 로드
+   * 현재 캠핑장의 좌표(lat, lng)를 기준으로 반경 10km 내의 다른 캠핑장을 찾습니다.
+   */
   const loadRecommendations = async (lat, lng) => {
     try {
-      // fetch 대신 API 서비스 사용
       const data = await getNearbyCamping(lat, lng, 10);
-      // ⭐ 현재 캠핑장은 제외하고 추천 목록 생성
+      // 현재 보고 있는 캠핑장은 추천 목록에서 제외합니다.
       const filtered = (data.data || []).filter(
         (item) => item.contentId !== id
       );
@@ -65,11 +69,15 @@ export default function CampingDetail() {
     }
   };
 
-  /** 날씨 */
+  /**
+   * 3. 현재 위치 날씨 정보 로드
+   * OpenWeatherMap API를 사용하여 현재 캠핑장의 기상 상태를 가져옵니다.
+   */
   const loadWeather = async (lat, lng) => {
     try {
+      const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
       const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=8ae0bcae9c8257ffa820f9449148fc80&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`
       );
       const data = await res.json();
       setWeather(data);
@@ -78,29 +86,31 @@ export default function CampingDetail() {
     }
   };
 
-  /** 🔹 주변 장소 검색 */
+  /**
+   * 4. 카카오 맵 주변 장소(카테고리) 검색
+   * 맛집, 카페 등 선택된 카테고리에 해당하는 장소를 지도 라이브러리로 검색합니다.
+   */
   const searchNearbyPlaces = (map) => {
     const kakao = window.kakao;
 
-    // 기존 정보창 닫기
+    // 검색 전 기존에 열려있던 정보창과 마커들을 모두 정리합니다.
     if (infoWindowRef.current) {
       infoWindowRef.current.close();
       infoWindowRef.current = null;
     }
 
-    // 기존 단일 클릭 마커 제거
     if (clickMarkerRef.current) {
       clickMarkerRef.current.setMap(null);
       clickMarkerRef.current = null;
     }
 
-    // 기존 마커 제거
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
 
     const places = new kakao.maps.services.Places();
     const center = new kakao.maps.LatLng(camp.mapY, camp.mapX);
 
+    // 반경 2km 내의 카테고리 장소를 검색합니다.
     places.categorySearch(
       category,
       (result, status) => {
@@ -113,12 +123,15 @@ export default function CampingDetail() {
     );
   };
 
-  /** 🔹 주변 마커 표시 */
+  /**
+   * 5. 검색된 장소들을 지도에 마커로 표시
+   * 각 장소마다 클릭 이벤트(정보창 표시, 마커 색상 변경)를 등록합니다.
+   */
   const displayMarkers = (map, places) => {
     const kakao = window.kakao;
 
     const newMarkers = places.map((place) => {
-      // 타입에 따라 아이콘 변경
+      // 추천 캠핑장인지 주변 시설인지에 따라 아이콘을 결정합니다.
       const icon =
         place.type === "recommend" ? markerIcons.recommend : markerIcons.nearby;
 
@@ -128,6 +141,7 @@ export default function CampingDetail() {
         image: createMarkerImage(icon),
       });
 
+      // 마커 클릭 시 나타날 정보창(InfoWindow) 설정
       const infoWindow = new kakao.maps.InfoWindow({
         content: `
         <div style="padding:10px; font-size:13px; width:220px;">
@@ -144,35 +158,24 @@ export default function CampingDetail() {
         removable: true,
       });
 
+      // 마커 클릭 이벤트 핸들러
       kakao.maps.event.addListener(marker, "click", () => {
-        // 🔹 기존 클릭 마커를 원래 아이콘으로 되돌리기
+        // 이전에 강조되었던 마커를 일반 아이콘으로 되돌립니다.
         if (previousClickedMarkerRef.current) {
           previousClickedMarkerRef.current.setImage(
             createMarkerImage(markerIcons.nearby)
           );
         }
 
-        // 🔹 추천 캠핑장인지 확인해서 기본 아이콘 선택
-        const baseIcon =
-          place.type === "recommend"
-            ? markerIcons.recommend
-            : markerIcons.nearby;
-
-        // 🔹 현재 마커를 노란색으로 변경
+        // 현재 클릭한 마커를 노란색(선택됨)으로 변경하여 강조합니다.
         marker.setImage(createMarkerImage(markerIcons.selected));
-
-        // 🔹 이전 클릭 마커 업데이트
         previousClickedMarkerRef.current = marker;
 
-        if (clickMarkerRef.current) {
-          clickMarkerRef.current.setMap(null);
-          clickMarkerRef.current = null;
-        }
         if (infoWindowRef.current) infoWindowRef.current.close();
-
         infoWindow.open(map, marker);
         infoWindowRef.current = infoWindow;
 
+        // 해당 장소로 지도의 중심을 부드럽게 이동시킵니다.
         map.panTo(new kakao.maps.LatLng(place.y, place.x));
       });
 
@@ -182,7 +185,10 @@ export default function CampingDetail() {
     markersRef.current = newMarkers;
   };
 
-  /** 시설정보 */
+  /**
+   * 6. 편의 시설 아이콘 렌더링
+   * 텍스트로 된 시설 정보를 아이콘과 함께 보기 좋게 변환합니다.
+   */
   const renderFacilities = (text) => {
     if (!text) return <p>시설 정보 없음</p>;
 
@@ -206,7 +212,10 @@ export default function CampingDetail() {
     ));
   };
 
-  /** SNS 공유 */
+  /**
+   * 7. 카카오톡 공유하기
+   * 현재 캠핑장의 정보를 친구에게 메시지로 보냅니다.
+   */
   const shareKakao = () => {
     if (!window.Kakao) return alert("카카오 SDK 로드 안됨");
 
@@ -237,13 +246,14 @@ export default function CampingDetail() {
     });
   };
 
-  //리스트 클릭하면 지도 이동 + 마커 표시
+  /**
+   * 8. 주변 목록 클릭 시 해당 위치로 지도 이동
+   * 리스트에서 장소를 클릭하면 지도의 중심을 옮기고 안내창을 띄웁니다.
+   */
   const handleMoveMap = (lat, lng, title, address, id) => {
     const kakao = window.kakao;
 
     if (!mapRef.current) {
-      console.warn("지도 준비 안됨 — 잠시 후 다시 시도합니다.");
-      // 안전하게 재시도 (짧게)
       setTimeout(() => handleMoveMap(lat, lng, title, address, id), 200);
       return;
     }
@@ -251,16 +261,13 @@ export default function CampingDetail() {
     const map = mapRef.current;
     const moveLatLng = new kakao.maps.LatLng(lat, lng);
 
-    // 지도 이동
     map.setCenter(moveLatLng);
 
-    // --- 클릭 마커(선택 마커)만 제거하고 교체 ---
     if (clickMarkerRef.current) {
       clickMarkerRef.current.setMap(null);
       clickMarkerRef.current = null;
     }
 
-    // ⭐ 선택된 주변 장소 노란마커도 원상 복구
     if (previousClickedMarkerRef.current) {
       previousClickedMarkerRef.current.setImage(
         createMarkerImage(markerIcons.nearby)
@@ -268,7 +275,6 @@ export default function CampingDetail() {
       previousClickedMarkerRef.current = null;
     }
 
-    // 새 마커 생성 (클릭 마커)
     const marker = new kakao.maps.Marker({
       map,
       position: moveLatLng,
@@ -280,58 +286,38 @@ export default function CampingDetail() {
       infoWindowRef.current = null;
     }
 
-    // 인포윈도우
     const infoWindow = new kakao.maps.InfoWindow({
-      content: `<div style="
-      padding:10px;
-      font-size:13px;
-      width:220px;
-      word-break:break-all;
-      white-space:normal;
-      overflow-wrap:break-word;
-    ">
+      content: `<div style="padding:10px; font-size:13px; width:220px; word-break:break-all;">
       <b>${title}</b><br/>
-        <span style="font-size:12px; color:#555;">
-          ${address}
-        </span><br/>
-        <a href="https://map.kakao.com/?itemId=${id}" target="_blank"
-            style="font-size:12px; color:#1e90ff;">
-            🔗 지도에서 보기
-          </a>
-          </div>`,
+        <span style="font-size:12px; color:#555;">${address}</span><br/>
+        <a href="https://map.kakao.com/?itemId=${id}" target="_blank" style="font-size:12px; color:#1e90ff;">🔗 지도에서 보기</a>
+      </div>`,
       removable: true,
     });
 
     infoWindow.open(map, marker);
     infoWindowRef.current = infoWindow;
-    clickMarkerRef.current = marker; // 클릭 마커 ref에 저장
+    clickMarkerRef.current = marker;
   };
 
-  /** 🔹 id 변경 시 기본 cleanup */
+  /**
+   * 9. ID 변경 시 데이터 새로고침 및 Cleanup
+   */
   useEffect(() => {
     loadDetail();
     return () => {
-      // 주변 마커 제거
+      // 컴포넌트 언마운트 시 지도의 모든 자원(마커, 정보창)을 정리합니다.
       markersRef.current.forEach((m) => m.setMap(null));
       markersRef.current = [];
-
-      // 캠핑장 마커 제거
-      if (campMarkerRef.current) {
-        campMarkerRef.current.setMap(null);
-        campMarkerRef.current = null;
-      }
-
-      // 정보창 제거
-      if (infoWindowRef.current) {
-        infoWindowRef.current.close();
-        infoWindowRef.current = null;
-      }
-
+      if (campMarkerRef.current) campMarkerRef.current.setMap(null);
+      if (infoWindowRef.current) infoWindowRef.current.close();
       mapRef.current = null;
     };
   }, [id]);
 
-  /** 🔹 지도 초기 생성 */
+  /**
+   * 10. 캠핑장 데이터 로드 후 지도 초기화
+   */
   useEffect(() => {
     if (!camp || !camp.mapY || !camp.mapX) return;
 
@@ -346,23 +332,16 @@ export default function CampingDetail() {
     const map = new kakao.maps.Map(container, options);
     mapRef.current = map;
 
-    /** ⭐⭐ 지도 클릭 시 노란마커 제거 ⭐⭐ */
+    // 빈 지도 클릭 시 열려있는 마커 강조와 정보창을 닫습니다.
     kakao.maps.event.addListener(map, "click", () => {
-      // 선택된 노란마커 제거
       if (clickMarkerRef.current) {
         clickMarkerRef.current.setMap(null);
         clickMarkerRef.current = null;
       }
-
-      // ⭐ 선택된 주변 장소 노란마커도 원상 복구
       if (previousClickedMarkerRef.current) {
-        previousClickedMarkerRef.current.setImage(
-          createMarkerImage(markerIcons.nearby)
-        );
+        previousClickedMarkerRef.current.setImage(createMarkerImage(markerIcons.nearby));
         previousClickedMarkerRef.current = null;
       }
-
-      // 열려 있는 인포윈도우 닫기
       if (infoWindowRef.current) {
         infoWindowRef.current.close();
         infoWindowRef.current = null;
@@ -375,39 +354,34 @@ export default function CampingDetail() {
     loadWeather(camp.mapY, camp.mapX);
   }, [camp]);
 
-  /** 🔹 카테고리 변경 시 주변 장소 재검색 */
+  /**
+   * 11. 카테고리(맛집, 카페 등) 변경 시 주변 장소 재검색
+   */
   useEffect(() => {
     if (!mapRef.current) return;
-
     const map = mapRef.current;
 
-    // 🔥 리스트 초기화
+    // 기존 검색 상태 초기화
     setNearby([]);
     setCombinedList([]);
-
-    // 🔥 기존 주변 마커 제거
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
-
-    // 🔥 기존 클릭 마커 제거
     if (clickMarkerRef.current) {
       clickMarkerRef.current.setMap(null);
       clickMarkerRef.current = null;
     }
-
-    // 🔥 기존 인포윈도우 제거
     if (infoWindowRef.current) {
       infoWindowRef.current.close();
       infoWindowRef.current = null;
     }
 
-    // ⭐ 추천 캠핑장은 카카오 카테고리 검색하지 않음
+    // 추천 캠핑장의 경우 별도의 카테고리 검색 없이 이전 데이터를 활용합니다.
     if (category === "RECOMMEND") {
-      setNearby([]); // 주변 장소 비움
+      setNearby([]);
       displayMarkers(
         map,
         recommend
-          .filter((c) => c.contentId !== camp.contentId) // ⭐ 현재 캠핑장 제외
+          .filter((c) => c.contentId !== camp.contentId)
           .map((c) => ({
             id: c.contentId,
             place_name: c.facltNm,
@@ -422,16 +396,16 @@ export default function CampingDetail() {
     searchNearbyPlaces(mapRef.current);
   }, [category]);
 
-  /** 🔹 캠핑장 마커 추가 */
+  /**
+   * 12. 메인 캠핑장 위치에 고정 마커 표시
+   */
   const addCampingMarker = (map, lat, lng) => {
     const kakao = window.kakao;
-
     const marker = new kakao.maps.Marker({
       map,
       position: new kakao.maps.LatLng(lat, lng),
       image: createMarkerImage(markerIcons.campMain),
     });
-
     campMarkerRef.current = marker;
   };
 

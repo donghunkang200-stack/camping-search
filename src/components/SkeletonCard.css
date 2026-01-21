@@ -1,0 +1,67 @@
+/* SkeletonCard.css */
+@reference "../index.css";
+
+.skeleton-card {
+  @apply card-premium;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-image {
+  height: 200px;
+  background: linear-gradient(90deg, var(--color-primary-50) 25%, var(--color-primary-100) 50%, var(--color-primary-50) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.skeleton-content {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.skeleton-line {
+  background: linear-gradient(90deg, var(--color-primary-50) 25%, var(--color-primary-100) 50%, var(--color-primary-50) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.skeleton-line.title {
+  height: 24px;
+  width: 70%;
+}
+
+.skeleton-line.text {
+  height: 14px;
+  width: 90%;
+}
+
+.skeleton-line.text.short {
+  width: 50%;
+}
+
+.skeleton-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+}
+
+.skeleton-button {
+  height: 36px;
+  width: 80px;
+  background: var(--color-primary-50);
+  border-radius: 10px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
