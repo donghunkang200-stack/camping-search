@@ -20,6 +20,11 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use(cors());
 app.use(express.json());
 
+// 1.5. 서버 상태 확인용 (Health Check)
+app.get("/", (req, res) => {
+  res.send("Hello! Camping Server is running correctly. 🚀");
+});
+
 // 2. 통합 백엔드 라우터 연결
 // - 인증 관련 (/api/register, /api/login)
 app.use("/api", authRoutes);
