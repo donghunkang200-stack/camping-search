@@ -65,18 +65,20 @@
 
 ```text
 camping-search/
-├── src/
-│   ├── api/            # Axios API 서비스 (인증 및 캠핑 데이터)
-│   ├── components/     # 공통 레이아웃, 스켈레톤, 스크롤 컴포넌트
-│   ├── pages/          # 홈, 로그인, 회원가입, 목록, 상세 페이지
-│   ├── store/          # Zustand 스토어 (Auth 상태 관리)
-│   └── index.css       # Tailwind v4 디자인 시스템 정의
-├── server/
-│   ├── controllers/    # 비즈니스 로직 (Auth, Camping - Caching 적용)
-│   ├── models/         # MongoDB 모델 (User) 및 인메모리 데이터 캐시
-│   ├── routes/         # API 경로 설정
-│   └── index.js        # 서버 진입점 및 DB 연결
-└── package.json        # 종속성 및 스크립트 설정
+├── client/             # 프론트엔드 (React + Vite)
+│   ├── src/
+│   │   ├── api/        
+│   │   ├── components/ 
+│   │   ├── pages/      
+│   │   ├── store/      
+│   │   └── index.css   
+│   └── package.json    
+├── server/             # 백엔드 (Node.js + Express)
+│   ├── controllers/    
+│   ├── models/         
+│   ├── routes/         
+│   └── index.js        
+└── package.json        # 통합 관리 스크립트
 ```
 
 ---
@@ -89,33 +91,24 @@ camping-search/
    ```
 
 2. **의존성 설치**
+   루트 디렉토리에서 모두 설치:
    ```bash
-   npm install        # 프론트엔드
-   cd server
-   npm install        # 백엔드
+   npm install
+   npm run install:all
    ```
 
 3. **환경 변수 설정 (`.env`)**
-   프로젝트 루트에 `.env` 파일을 생성하고 다음 키를 설정하세요.
-   ```env
-   VITE_KAKAO_JS_KEY=your_kakao_key
-   VITE_WEATHER_API_KEY=your_weather_key
-   ```
-   
-   서버 폴더(`server/.env`) 설정:
-   ```env
-   GOCAMPING_KEY=your_gocamping_key
-   MONGODB_URI=your_mongodb_uri
-   JWT_SECRET=your_jwt_secret
-   ```
+   - `client/.env`: 프론트엔드 설정 (API 키 등)
+   - `server/.env`: 백엔드 설정 (DB URI 등)
 
 4. **실행**
    ```bash
-   # 백엔드 실행 (server 폴더에서)
+   # 동시에 실행 (루트에서)
    npm run dev
    
-   # 프론트엔드 실행 (루트 폴더에서)
-   npm run dev
+   # 또는 각각 실행
+   npm run dev:server
+   npm run dev:client
    ```
 
 ---

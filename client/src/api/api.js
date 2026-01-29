@@ -7,7 +7,7 @@ import { useAuthStore } from "../store/useAuthStore";
  * 모든 API 요청의 기본 URL과 가로채기(Interceptor) 로직을 정의합니다.
  */
 const api = axios.create({
-  baseURL: "/api", // Vite 프록시 설정을 통해 백엔드 서버와 통신합니다.
+  baseURL: `${import.meta.env.VITE_API_BASE || ""}/api`, // 환경 변수(http://localhost:5000) 뒤에 /api 추가
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
