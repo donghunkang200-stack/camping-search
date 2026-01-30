@@ -96,15 +96,41 @@ const App = () => {
   // 앱 실행 시 카카오맵 SDK를 동적으로 로드합니다.
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_JS_KEY
-      }&libraries=services&autoload=false`;
+    // use explicit https scheme and include autoload=false
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_JS_KEY}&libraries=services&autoload=false`;
 
     script.onload = () => {
-      window.kakao.maps.load(() => {
-        console.log("Kakao Map SDK Loaded");
-      });
+      try {
+        if (window.kakao && window.kakao.maps && typeof window.kakao.maps.load === "function") {
+          window.kakao.maps.load(() => {
+            window.__kakao_ready = true;
+            console.log("Kakao Map SDK Loaded");
+          });
+        } else {
+          // If maps API isn't immediately available, set a flag and let waitForKakao poll
+          console.warn("Kakao script loaded but maps not ready yet");
+        }
+      } catch (err) {
+        console.error("Error during Kakao maps.load():", err);
+        window.__kakao_load_error = true;
+      }
     };
+
+    script.onerror = () => {
+      console.error("Failed to load Kakao Maps SDK script");
+      window.__kakao_load_error = true;
+    };
+
     document.head.appendChild(script);
+
+    // Cleanup: remove script if component unmounts
+    return () => {
+      try {
+        document.head.removeChild(script);
+      } catch (e) {
+        // ignore
+      }
+    };
   }, []);
 
   return (
