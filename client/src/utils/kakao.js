@@ -3,10 +3,12 @@
 
 export function waitForKakao(timeout = 10000) {
   return new Promise((resolve, reject) => {
-    if (typeof window === "undefined") return reject(new Error("No window object"));
+    if (typeof window === "undefined")
+      return reject(new Error("No window object"));
 
     // Fast fail if loader signaled an error
-    if (window.__kakao_load_error) return reject(new Error("Kakao SDK script failed to load"));
+    if (window.__kakao_load_error)
+      return reject(new Error("Kakao SDK script failed to load"));
 
     // If already ready, resolve
     if (window.kakao && window.kakao.maps && window.__kakao_ready) {

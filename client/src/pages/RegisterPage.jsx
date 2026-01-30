@@ -20,8 +20,8 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       // apiService.register 함수를 호출하여 사용자 등록을 시도합니다.
-      // 이름과 이메일은 현재 백엔드에서 사용되지 않으므로 제거합니다.
-      await apiService.register(username, password);
+      // 이름과 이메일도 백엔드에서 필수로 요구하므로 함께 전송합니다.
+      await apiService.register({ name, username, email, password });
       // 회원가입 성공 시 축하 메시지를 띄우고 로그인 페이지로 유도합니다.
       toast.success("회원가입이 완료되었습니다! 로그인해주세요.");
       navigate("/login");
@@ -106,10 +106,11 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-5 text-white font-black rounded-2xl shadow-[0_10px_20px_rgba(75,107,75,0.2)] transition-all flex justify-center items-center gap-2 ${loading
-                ? "bg-primary-500 opacity-70 cursor-not-allowed"
-                : "bg-primary-600 hover:bg-primary-800 hover:-translate-y-1 active:scale-[0.98]"
-                }`}
+              className={`w-full py-5 text-white font-black rounded-2xl shadow-[0_10px_20px_rgba(75,107,75,0.2)] transition-all flex justify-center items-center gap-2 ${
+                loading
+                  ? "bg-primary-500 opacity-70 cursor-not-allowed"
+                  : "bg-primary-600 hover:bg-primary-800 hover:-translate-y-1 active:scale-[0.98]"
+              }`}
             >
               {loading ? "텐트 치는 중..." : "가입 완료하기"}
             </button>

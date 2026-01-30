@@ -101,7 +101,11 @@ const App = () => {
 
     script.onload = () => {
       try {
-        if (window.kakao && window.kakao.maps && typeof window.kakao.maps.load === "function") {
+        if (
+          window.kakao &&
+          window.kakao.maps &&
+          typeof window.kakao.maps.load === "function"
+        ) {
           window.kakao.maps.load(() => {
             window.__kakao_ready = true;
             console.log("Kakao Map SDK Loaded");

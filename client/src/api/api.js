@@ -35,7 +35,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // 응답 가로채기: 서버 응답 객체에서 데이터만 추출하여 반환합니다.
@@ -46,9 +46,12 @@ api.interceptors.response.use(
   },
   (error) => {
     // 에러 발생 시 공통 에러 메시지 처리
-    const message = error.response?.data?.message || error.message || "요청 중 오류가 발생했습니다.";
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "요청 중 오류가 발생했습니다.";
     return Promise.reject(new Error(message));
-  }
+  },
 );
 
 /**
@@ -61,8 +64,12 @@ export const apiService = {
     return api.post("/login", { username, password });
   },
   // 회원가입 요청
-  register: async (username, password) => {
-    return api.post("/register", { username, password });
+  register: async (usernameOrData, password) => {
+    // support two calling styles: register(username, password) or register({ name, username, email, password })
+    if (typeof usernameOrData === "object" && usernameOrData !== null) {
+      return api.post("/register", usernameOrData);
+    }
+    return api.post("/register", { username: usernameOrData, password });
   },
 };
 
