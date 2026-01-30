@@ -5,11 +5,8 @@
   <meta charset="UTF-8" />
   <title>camping-go</title>
 
-  <!-- 🔥 autoload 제거 (기본값 true) -->
-  <!-- 🔥 반드시 head 안에서 로드 -->
-  <script type="text/javascript"
-    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=13b37efbbdceaa83b5f82b7ff524c377&libraries=services"></script>
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <!-- Kakao Maps SDK is loaded dynamically in App.jsx using VITE_KAKAO_JS_KEY (autoload=false). -->
+  <!-- Static script tags removed to avoid duplicate/ conflicting loads -->
 </head>
 
 <body>

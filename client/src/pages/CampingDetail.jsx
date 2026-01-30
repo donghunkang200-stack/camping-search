@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { getCampingDetail, getNearbyCamping } from "../api/campingApi";
+import { waitForKakao } from "../utils/kakao";
 import "./CampingDetail.css";
 
 export default function CampingDetail() {
@@ -31,6 +32,12 @@ export default function CampingDetail() {
   //마커 이미지 생성
   const createMarkerImage = (url) => {
     const kakao = window.kakao;
+    if (!kakao || !kakao.maps) {
+      console.error(
+        "Kakao maps SDK not loaded yet - createMarkerImage called prematurely",
+      );
+      return null;
+    }
     return new kakao.maps.MarkerImage(url, new kakao.maps.Size(40, 42), {
       offset: new kakao.maps.Point(20, 42),
     });
@@ -61,7 +68,7 @@ export default function CampingDetail() {
       const data = await getNearbyCamping(lat, lng, 10);
       // 현재 보고 있는 캠핑장은 추천 목록에서 제외합니다.
       const filtered = (data.data || []).filter(
-        (item) => item.contentId !== id
+        (item) => item.contentId !== id,
       );
       setRecommend(filtered);
     } catch (err) {
@@ -77,7 +84,7 @@ export default function CampingDetail() {
     try {
       const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
       const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`,
       );
       const data = await res.json();
       setWeather(data);
@@ -91,6 +98,10 @@ export default function CampingDetail() {
    * 맛집, 카페 등 선택된 카테고리에 해당하는 장소를 지도 라이브러리로 검색합니다.
    */
   const searchNearbyPlaces = (map) => {
+    if (!window.kakao || !window.kakao.maps) {
+      console.error("Kakao maps SDK not loaded - searchNearbyPlaces skipped");
+      return;
+    }
     const kakao = window.kakao;
 
     // 검색 전 기존에 열려있던 정보창과 마커들을 모두 정리합니다.
@@ -119,7 +130,7 @@ export default function CampingDetail() {
           displayMarkers(map, result);
         }
       },
-      { location: center, radius: 2000 }
+      { location: center, radius: 2000 },
     );
   };
 
@@ -163,7 +174,7 @@ export default function CampingDetail() {
         // 이전에 강조되었던 마커를 일반 아이콘으로 되돌립니다.
         if (previousClickedMarkerRef.current) {
           previousClickedMarkerRef.current.setImage(
-            createMarkerImage(markerIcons.nearby)
+            createMarkerImage(markerIcons.nearby),
           );
         }
 
@@ -270,7 +281,7 @@ export default function CampingDetail() {
 
     if (previousClickedMarkerRef.current) {
       previousClickedMarkerRef.current.setImage(
-        createMarkerImage(markerIcons.nearby)
+        createMarkerImage(markerIcons.nearby),
       );
       previousClickedMarkerRef.current = null;
     }
@@ -321,37 +332,51 @@ export default function CampingDetail() {
   useEffect(() => {
     if (!camp || !camp.mapY || !camp.mapX) return;
 
-    const kakao = window.kakao;
-    const container = document.getElementById("map");
+    let canceled = false;
 
-    const options = {
-      center: new kakao.maps.LatLng(camp.mapY, camp.mapX),
-      level: 5,
+    waitForKakao(10000)
+      .then((kakao) => {
+        if (canceled) return;
+        const container = document.getElementById("map");
+
+        const options = {
+          center: new kakao.maps.LatLng(camp.mapY, camp.mapX),
+          level: 5,
+        };
+
+        const map = new kakao.maps.Map(container, options);
+        mapRef.current = map;
+
+        // 빈 지도 클릭 시 열려있는 마커 강조와 정보창을 닫습니다.
+        kakao.maps.event.addListener(map, "click", () => {
+          if (clickMarkerRef.current) {
+            clickMarkerRef.current.setMap(null);
+            clickMarkerRef.current = null;
+          }
+          if (previousClickedMarkerRef.current) {
+            previousClickedMarkerRef.current.setImage(
+              createMarkerImage(markerIcons.nearby),
+            );
+            previousClickedMarkerRef.current = null;
+          }
+          if (infoWindowRef.current) {
+            infoWindowRef.current.close();
+            infoWindowRef.current = null;
+          }
+        });
+
+        addCampingMarker(map, camp.mapY, camp.mapX);
+        searchNearbyPlaces(map);
+        loadRecommendations(camp.mapY, camp.mapX);
+        loadWeather(camp.mapY, camp.mapX);
+      })
+      .catch((err) => {
+        console.error("Kakao SDK failed to load:", err);
+      });
+
+    return () => {
+      canceled = true;
     };
-
-    const map = new kakao.maps.Map(container, options);
-    mapRef.current = map;
-
-    // 빈 지도 클릭 시 열려있는 마커 강조와 정보창을 닫습니다.
-    kakao.maps.event.addListener(map, "click", () => {
-      if (clickMarkerRef.current) {
-        clickMarkerRef.current.setMap(null);
-        clickMarkerRef.current = null;
-      }
-      if (previousClickedMarkerRef.current) {
-        previousClickedMarkerRef.current.setImage(createMarkerImage(markerIcons.nearby));
-        previousClickedMarkerRef.current = null;
-      }
-      if (infoWindowRef.current) {
-        infoWindowRef.current.close();
-        infoWindowRef.current = null;
-      }
-    });
-
-    addCampingMarker(map, camp.mapY, camp.mapX);
-    searchNearbyPlaces(map);
-    loadRecommendations(camp.mapY, camp.mapX);
-    loadWeather(camp.mapY, camp.mapX);
   }, [camp]);
 
   /**
@@ -389,7 +414,7 @@ export default function CampingDetail() {
             x: c.mapX,
             y: c.mapY,
             type: "recommend",
-          }))
+          })),
       );
       return;
     }
@@ -557,7 +582,7 @@ export default function CampingDetail() {
                   .filter((p) =>
                     category === "RECOMMEND"
                       ? p.type === "recommend"
-                      : p.type !== "recommend"
+                      : p.type !== "recommend",
                   )
                   .map((place) => (
                     <li
@@ -569,7 +594,7 @@ export default function CampingDetail() {
                           place.x,
                           place.place_name,
                           place.address_name,
-                          place.id
+                          place.id,
                         )
                       }
                     >
