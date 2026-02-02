@@ -18,9 +18,21 @@ mongoose
   .catch((err) => console.error("❌ MongoDB 연결 실패:", err));
 
 // 1. 공통 미들웨어 설정
-// CORS 설정: Netlify 배포 도메인만 허용하고 preflight(OPTIONS) 처리
+// CORS 설정: Netlify 배포 도메인 및 로컬 개발(Dev) 도메인 허용, preflight(OPTIONS) 처리
+const allowedOrigins = ["https://camping-go.netlify.app"];
+if (process.env.NODE_ENV !== "production") {
+  // 개발 중 로컬 Vite 서버에서 테스트할 때 사용 (http://localhost:5173)
+  allowedOrigins.push("http://localhost:5173");
+}
 const corsOptions = {
-  origin: "https://camping-go.netlify.app",
+  origin: (origin, callback) => {
+    // 브라우저의 Origin 헤더가 없을 때(예: 서버 내부 호출)도 허용
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200, // 일부 구형 브라우저에서 204를 처리하지 못하는 문제 방지
   // credentials: true, // 쿠키/인증이 필요하면 주석 해제하고 클라이언트에서 withCredentials 설정
 };
