@@ -6,7 +6,7 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: node index.js
-    root: server
+    rootDir: server
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
