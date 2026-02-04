@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>포트폴리오 — 캠핑가자</title>
+  <link rel="stylesheet" href="portfolio.css" />
+</head>
+
+<body>
+  <header class="hero">
+    <div class="inner">
+      <h1>캠핑가자 — Camping Search App</h1>
+      <p class="tagline">
+        공공데이터(고캠핑) 기반 캠핑장 검색 · 지도 · 날씨 통합 서비스
+      </p>
+      <p class="meta">
+        Server-side caching · Kakao Maps · OpenWeather · Infinite Scroll
+      </p>
+      <p class="actions">
+        <a class="btn" href="https://github.com/donghunkang200-stack/camping-go" target="_blank">📂 GitHub</a>
+        <a class="btn outline" href="https://camping-go.netlify.app" target="_blank">🏠 프로젝트 루트</a>
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>프로젝트 소개 (Project Overview)</h2>
+      <p>
+        <strong>'캠핑가자'</strong>는 한국관광공사의 GoCamping API를 기반으로 전국 캠핑장 정보를 한눈에 확인하고 탐색할 수 있는 웹 어플리케이션입니다.
+        사용자에게 <strong>빠른 반응 속도</strong>와 <strong>안정적인 데이터</strong>를 제공하는 것을 최우선 목표로 설계되었습니다.
+      </p>
+      <div class="challenge-box">
+        <h3>💡 왜 만들었나요?</h3>
+        <p>
+          공공데이터 API는 응답이 느리거나 일시적으로 중단될 수 있습니다. 이를 극복하기 위해 <strong>Server-side Caching</strong> 레이어를 도입하여, API 장애 상황에서도
+          사용자에게 끊김 없는 탐색 경험을 제공하고자 했습니다.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>시스템 아키텍처 (System Architecture)</h2>
+      <div class="arch-wrapper">
+        <div class="arch-container">
+          <div class="arch-item">
+            <strong>Client (React)</strong>
+            <span>Vite, Router, AuthContext</span>
+          </div>
+          <div class="arch-arrow"></div>
+          <div class="arch-row">
+            <div class="arch-item">
+              <strong>API Server (Node.js)</strong>
+              <span>Express, Axios, Cache</span>
+            </div>
+            <div class="arch-arrow horizontal"></div>
+            <div class="arch-item">
+              <strong>In-Memory Cache</strong>
+              <span>Camping Data (JSON)</span>
+            </div>
+          </div>
+          <div class="arch-arrow"></div>
+          <div class="arch-row">
+            <div class="arch-item">
+              <strong>Database</strong>
+              <span>MongoDB (User Info)</span>
+            </div>
+            <div class="arch-item" style="border-style: dashed; border-color: #666;">
+              <strong>External API</strong>
+              <span>GoCamping, Weather API</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>핵심 기술 스택 (Tech Stack)</h2>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <h3>Frontend</h3>
+          <p>
+            <span class="badge">React 19</span> <span class="badge">Vite</span>
+            <span class="badge">React Router</span> <span class="badge">Context API</span>
+            <span class="badge">Tailwind CSS</span>
+            Fast Refresh와 모던한 상태 관리를 통한 경쾌한 UX 제공.
+          </p>
+        </div>
+        <div class="tech-item">
+          <h3>Backend</h3>
+          <p>
+            <span class="badge">Node.js</span> <span class="badge">Express</span>
+            <span class="badge">MongoDB (Mongoose)</span> <span class="badge">JWT Auth</span>
+            인증 시스템 및 고성능 캐시 레이어 구축.
+          </p>
+        </div>
+        <div class="tech-item">
+          <h3>Integrations</h3>
+          <p>
+            <span class="badge">Kakao Maps SDK</span> <span class="badge">Kakao Share</span>
+            <span class="badge">OpenWeather API</span> <span class="badge">Axios</span>
+            외부 API와의 안정적인 통신 및 SDK 캡슐화.
+          </p>
+        </div>
+        <div class="tech-item">
+          <h3>Utilities</h3>
+          <p>
+            <span class="badge">Lodash</span> <span class="badge">Puppeteer</span>
+            <span class="badge">GIF Encoder</span> <span class="badge">Prettier</span>
+            코드 품질 유지 및 자동화된 문서화 도구 활용.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>주요 기능 및 해결 과제 (Features & Solutions)</h2>
+      <div class="challenge-box">
+        <h3>🛡️ 회원 시스템 및 보안 (Auth & Security)</h3>
+        <p>
+          JWT 기반의 토큰 인증 시스템을 구축하였습니다. <code>AuthContext</code>를 통해 전역적으로 로그인 상태를 관리하며, 보호된 라우트(Protected Routes) 처리를 통해
+          사용자 데이터를 안전하게 보호합니다.
+        </p>
+      </div>
+
+      <div class="challenge-box" style="margin-top: 20px;">
+        <h3>⚡ 데이터 가용성 및 성능 (Availability)</h3>
+        <p>
+          GoCamping API의 응답속도 저하 문제를 해결하기 위해, 서버 기동 시 약 3,000건의 데이터를 <strong>선로딩(Preload)</strong>하여 인메모리에 저장합니다. 이를 통해
+          클라이언트 요청 시 50ms 미만의 초고속 응답을 보장합니다.
+        </p>
+      </div>
+
+      <ul style="margin-top: 20px;">
+        <li>
+          <strong>지능형 검색:</strong> <code>Lodash.debounce</code>를 적용하여 사용자 입력 시 불필요한 API 호출을 방지하고 성능을 최적화했습니다.
+        </li>
+        <li>
+          <strong>무한 스크롤:</strong> <code>Intersection Observer</code> API를 활용하여 장치 자원을 효율적으로 사용하면서 끊김 없는 데이터 브라우징을
+          구현했습니다.
+        </li>
+        <li>
+          <strong>컴포넌트 기반 지도 제어:</strong> Kakao Maps SDK를 React 라이플사이클에 맞춰 캡슐화하여, 지도 중심 이동(panTo), 마커 클러스터링 기반의 주변 시설
+          검색을 구현했습니다.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>코드 품질 및 구조 (Code Quality & Structure)</h2>
+      <div class="challenge-box">
+        <h3>📚 유지보수를 고려한 상세한 문서화</h3>
+        <p>
+          모든 핵심 로직에 <strong>구체적인 한국어 주석</strong>을 작성하여, 협업 및 미래의 유지보수 효율을 극대화했습니다.
+          Prettier 설정을 강제하여 일관된 코드 스타일을 유지하고 있습니다.
+        </p>
+      </div>
+
+      <div class="tech-grid" style="margin-top: 20px;">
+        <div class="tech-item">
+          <h3>Server Core</h3>
+          <p>
+            <code>campingController.js</code>: 데이터 가공 및 캐시 제어 메커니즘.<br>
+            <code>index.js</code>: 캐시 선로딩 및 배치 스케줄링.
+          </p>
+        </div>
+        <div class="tech-item">
+          <h3>Client Core</h3>
+          <p>
+            <code>CampingList.jsx</code>: 고성능 목록 필터링 및 무한 스크롤.<br>
+            <code>CampingDetail.jsx</code>: 복합 SDK 연동 및 지도 제어 로직.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>성능 지표 및 개발 품질 (Insight)</h2>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <h3>Response Time</h3>
+          <p>Local Cache 적용 전 2~3s → 적용 후 <strong>30ms</strong> 수준으로 대폭 단축.</p>
+        </div>
+        <div class="tech-item">
+          <h3>Load Stability</h3>
+          <p>외부 API 장애 발생 시에도 캐시 데이터를 통해 100% 가용성 유지.</p>
+        </div>
+      </div>
+      <div class="challenge-box" style="margin-top: 20px;">
+        <h3>📱 사용자 중심 UX 설계 (UX Considerations)</h3>
+        <p>
+          모바일 환경을 고려하여 모든 버튼은 터치에 최적화된 크기로 설계되었습니다. 특히 상세 페이지의 지도 영역은 스크롤 시 방해되지 않도록 적절한 터치 영역(Sticky Interaction)을 분리하여
+          구현했습니다.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>향후 발전 방향 (Future Roadmap)</h2>
+      <ul>
+        <li><strong>찜 기능(Favorites):</strong> 사용자가 선호하는 캠핑장을 저장하고 마이페이지에서 다시 확인할 수 있는 기능 추가 예정.</li>
+        <li><strong>리뷰 시스템:</strong> 각 캠핑장에 대한 사용자들의 실제 후기와 평점을 공유할 수 있는 커뮤니티 기능 확장.</li>
+        <li><strong>예약 연동:</strong> 외부 예약 사이트와의 딥링크 연동을 통해 검색부터 예약까지 이어지는 원스톱 서비스 구축.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>스크린샷 & 데모 (Animated Demos)</h2>
+      <div class="gallery">
+        <figure class="wide">
+          <img src="assets/demo-list.gif?v=1" alt="캠핑장 리스트 데모" />
+          <figcaption>캠핑장 목록 데모 (실시간 검색 및 무한 스크롤)</figcaption>
+        </figure>
+        <figure class="wide">
+          <img src="assets/demo-detail.gif?v=1" alt="캠핑장 상세 데모" />
+          <figcaption>캠핑장 상세 데모 (지도 탐색, 카테고리 검색, 날씨)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <footer>
+      <p>작성자 — 강동훈 · 업데이트: 2026-02-04</p>
+    </footer>
+  </main>
+</body>
+
+</html>
